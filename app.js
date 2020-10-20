@@ -10,6 +10,8 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const teamMembers = [];
+const emptyId = [];
 
 const questionsForManager = [
     {
@@ -34,6 +36,36 @@ const questionsForManager = [
     }
 ];
 
+function manager() {
+    inquirer.prompt(questionsForManager).then(function(data){
+        const manager = new Manager(data.managerName, data.managerId, data.managerEmail, data.officeNumber);
+        teamMembers.push(manager);
+        emptyId.push(data.managerId);
+        team();
+    });
+};
+
+function team() {
+    inquirer.prompt([
+        {
+            type: "list",
+            name: "employeeChoice",
+            message: "Which type of employee would you like to add?",
+            choices: [
+                "Engineer",
+                "Intern",
+                "I don't want to add any more team members"
+            ]
+        }
+    ]).then(function(data){
+        if (data.employeeChoice === "Engineer"){
+            engineer();
+        } else if (data.employeeChoice === "Intern"){
+            intern();
+        } 
+    });
+};
+
 function engineer() {
     inquirer.prompt([
         {
@@ -57,6 +89,12 @@ function engineer() {
             message: "What is the engineer's GitHub username?"
         }
     ])
+     then(function(data){
+        const engineer = new Engineer(data.engineerName, data.engineerId, data.engineerEmail, data.engineerGithub);
+        teamMembers.push(engineer);
+        emptyId.push(data.engineerId);
+        team();
+});
 };
 
 function intern() {
@@ -82,4 +120,10 @@ function intern() {
             message: "What is the intern's school?"
         }
     ])
+    then(function(data){
+        const intern = new Intern(data.internName, data.internId, data.internEmail, data.internSchool);
+        teamMembers.push(intern);
+        emptyId.push(data.internId);
+        team();
+});
 };
