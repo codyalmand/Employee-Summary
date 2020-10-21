@@ -57,12 +57,13 @@ function team() {
                 "I don't want to add any more team members"
             ]
         }
-    ]).then(function(data){
+    ])
+    .then(function(data){
         if (data.employeeChoice === "Engineer"){
             engineer();
         } else if (data.employeeChoice === "Intern"){
             intern();
-        } 
+        } else (outputTeam());
     });
 };
 
@@ -89,7 +90,7 @@ function engineer() {
             message: "What is the engineer's GitHub username?"
         }
     ])
-     then(function(data){
+     .then(function(data){
         const engineer = new Engineer(data.engineerName, data.engineerId, data.engineerEmail, data.engineerGithub);
         teamMembers.push(engineer);
         emptyId.push(data.engineerId);
@@ -120,10 +121,19 @@ function intern() {
             message: "What is the intern's school?"
         }
     ])
-    then(function(data){
+    .then(function(data){
         const intern = new Intern(data.internName, data.internId, data.internEmail, data.internSchool);
         teamMembers.push(intern);
         emptyId.push(data.internId);
         team();
 });
 };
+
+function outputTeam() {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR)
+    }
+    fs.writeFileSync(outputPath, render(teamMembers), "utf-8");
+}
+
+manager();
